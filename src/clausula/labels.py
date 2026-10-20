@@ -26,3 +26,37 @@ EXPLANATIONS = {
     "Jurisdiction": "Disputes must be resolved in courts chosen by the provider, possibly far from you.",
     "Arbitration": "Disputes go to private arbitration instead of a court, limiting your legal options.",
 }
+
+# Short, plain-language headline for each finding (shown as the title of each point in the app).
+HEADLINES = {
+    "Limitation of liability": "They limit their responsibility if something goes wrong",
+    "Unilateral termination": "They can close your account at any time",
+    "Unilateral change": "They can change the terms whenever they want",
+    "Content removal": "They can delete your content without notice",
+    "Contract by using": "Just using the service means you accept the terms",
+    "Choice of law": "A law chosen by them governs the contract",
+    "Jurisdiction": "Disputes go to courts they choose",
+    "Arbitration": "You give up your right to go to court",
+}
+
+# Editorial choice: how much each kind of clause can hurt a regular user.
+SEVERITY = {
+    "Arbitration": "high",
+    "Limitation of liability": "high",
+    "Unilateral termination": "high",
+    "Unilateral change": "medium",
+    "Content removal": "medium",
+    "Jurisdiction": "medium",
+    "Choice of law": "low",
+    "Contract by using": "low",
+}
+_WEIGHT = {"high": 3, "medium": 2, "low": 1}
+
+
+def grade(categories) -> str:
+    """A (fair) to E (many serious red flags), from the *kinds* of unfair clause found, weighted by severity."""
+    score = sum(_WEIGHT[SEVERITY[c]] for c in set(categories))
+    for letter, limit in (("A", 0), ("B", 3), ("C", 7), ("D", 11)):
+        if score <= limit:
+            return letter
+    return "E"

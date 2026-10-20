@@ -1,6 +1,6 @@
 # Runtime: what the API and the app need
 numpy
-scikit-learn
+scikit-learn==1.9.1  # baseline.joblib is a pickle: keep the version it was saved with
 joblib
 torch
 transformers>=5

@@ -17,6 +17,7 @@ COPY pyproject.toml ./
 COPY src ./src
 COPY api ./api
 COPY app ./app
+COPY .streamlit ./.streamlit
 RUN pip install --no-deps -e .
 
 # Don't run as root (uid 1000 is also what Hugging Face Spaces expects).

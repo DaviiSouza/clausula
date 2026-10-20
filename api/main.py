@@ -52,7 +52,7 @@ class AnalyzeResponse(BaseModel):
     model: str
     n_sentences: int
     n_flagged: int
-    risk_level: str
+    grade: str = Field(description="A (fair) to E (many serious red flags)")
     categories: dict[str, int]
     clauses: list[Clause]
 

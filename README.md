@@ -15,9 +15,12 @@ Detect potentially unfair clauses in Terms of Service. Paste a ToS (or upload a 
 | Always "fair" | 0.000 | – | – |
 | TF-IDF + Logistic Regression | 0.765 | ~0.04 | CPU |
 | distilroberta-base (fine-tuned) | 0.778 | ~1.5 | GPU |
-| **legal-bert-base-uncased (fine-tuned, 3 seeds)** | **0.782 ± 0.006** | ~3 | GPU |
+| legal-bert-base-uncased (fine-tuned, 3 seeds) | 0.782 ± 0.006 | ~3 (GPU) / ~280 (1 CPU) | GPU |
+| **Cascade: baseline screens → legal-bert (deployed)** | **0.785** | **~28 (1 CPU)** | CPU |
 
 The transformer is stable across seeds and always beats the baseline, but a paired bootstrap shows the gap is not statistically significant on this small test set (95% CI of the difference: [−0.045, +0.075]). Details in [`notebooks/03_model_comparison.ipynb`](notebooks/03_model_comparison.ipynb).
+
+**Making it fast on a free CPU:** ~89% of ToS sentences are fair, so the fast baseline screens every sentence and only the "maybe unfair" ones (~25%) go to legal-bert. With the gate chosen on validation, quality is unchanged and CPU inference is ~10× faster. See [`notebooks/04_cascade.ipynb`](notebooks/04_cascade.ipynb).
 
 ## Setup
 
@@ -47,7 +50,7 @@ Or with Docker (models are mounted from `./models`):
 docker compose up --build
 ```
 
-Set `CLAUSULA_BACKEND=baseline` to use the fast TF-IDF model instead of legal-bert.
+`CLAUSULA_BACKEND` selects the model: `cascade` (default), `legal-bert` or `baseline`. Models load from `./models` if present, otherwise from the [Hugging Face Hub](https://huggingface.co/DaviiiiS/clausula-legal-bert).
 
 ### API
 
@@ -56,7 +59,7 @@ curl -X POST localhost:8000/analyze -H "Content-Type: application/json" \
   -d '{"text": "We may terminate your account at any time, for any reason."}'
 ```
 
-`POST /analyze/pdf` accepts a PDF upload. The response lists each flagged clause with its categories, confidence scores and a plain-language explanation, plus an overall risk level (based on how many different kinds of unfair clause were found).
+`POST /analyze/pdf` accepts a PDF upload. The response lists each flagged clause with its categories, confidence scores and a plain-language explanation, plus an overall **grade from A (fair) to E (serious red flags)**, based on which kinds of unfair clause were found, weighted by their impact.
 
 ## Roadmap
 
