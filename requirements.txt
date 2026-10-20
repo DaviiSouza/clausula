@@ -1,0 +1,12 @@
+# Runtime: what the API and the app need
+numpy
+scikit-learn
+joblib
+torch
+transformers>=5
+fastapi
+uvicorn[standard]
+python-multipart
+pypdf
+streamlit
+requests

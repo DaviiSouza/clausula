@@ -1,0 +1,10 @@
+# Training, notebooks and tests
+-r requirements.txt
+datasets>=3
+pandas
+matplotlib
+jupyterlab
+accelerate
+pytest
+httpx
+ruff
